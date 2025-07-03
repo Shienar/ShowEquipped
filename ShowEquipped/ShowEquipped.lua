@@ -21,6 +21,7 @@ local function comparator_Sets(arg1, arg2)
 end
 
 function SE.onUpdateEquips(code, bagID, slotIndex, isNewItem, soundCategory, updateReason, stackChange)
+
 	if bagID == BAG_WORN then
 		
 		
@@ -74,7 +75,7 @@ function SE.onUpdateEquips(code, bagID, slotIndex, isNewItem, soundCategory, upd
 				if index == -1 then 
 					SE.trackedSets[#SE.trackedSets+1] = item 
 				else
-					SE.trackedSets[index].count = SE.trackedSets[index].count + 1
+					SE.trackedSets[index].count = SE.trackedSets[index].count + item.count
 				end
 				
 			end
@@ -488,6 +489,7 @@ function SE.Initialize()
 	settings:AddSettings({positionSection, position, offset_x, offset_y})
 	
 	EVENT_MANAGER:RegisterForEvent(SE.name, EVENT_INVENTORY_SINGLE_SLOT_UPDATE, SE.onUpdateEquips)
+	EVENT_MANAGER:RegisterForEvent(SE.name, EVENT_ARMORY_BUILD_RESTORE_RESPONSE, SE.onUpdateEquips)
 
 	SE.onUpdateEquips(_, BAG_WORN, _, _, _, _, _)
 end
