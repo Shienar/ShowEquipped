@@ -21,7 +21,6 @@ local function comparator_Sets(arg1, arg2)
 end
 
 function SE.onUpdateEquips(code, bagID, slotIndex, isNewItem, soundCategory, updateReason, stackChange)
-
 	if bagID == BAG_WORN then
 		
 		
@@ -95,7 +94,7 @@ function SE.onUpdateEquips(code, bagID, slotIndex, isNewItem, soundCategory, upd
 			SE.rows[k]:SetText("("..v.count.."/"..v.maxCount..") "..v.name)
 			
 			--update color
-			if v.count ~= nil and v.maxCount ~= nil and v.count ~= v.maxCount then
+			if v.count ~= nil and v.maxCount ~= nil and v.count ~= v.maxCount and ((v.count > v.maxCount and SE.savedVariables.allowOverflow) == false) then
 				SE.rows[k]:SetColor(SE.savedVariables.colorR_Incomplete, SE.savedVariables.colorG_Incomplete, SE.savedVariables.colorB_Incomplete)
 				SE.rows[k]:SetAlpha(SE.savedVariables.colorA_Incomplete)
 			else
@@ -109,13 +108,14 @@ end
 
 function SE.applyValues()
 	--toggle
+	ShowEquippedName:SetHidden(SE.savedVariables.hideTitle)
 	ShowEquipped:SetHidden(SE.savedVariables.checked)
 	
 	--Color
 	ShowEquippedName:SetColor(SE.savedVariables.colorR_Title, SE.savedVariables.colorG_Title, SE.savedVariables.colorB_Title)
 	ShowEquippedName:SetAlpha(SE.savedVariables.colorA_Title)
 	for k, v in pairs(SE.trackedSets) do
-		if v.count ~= nil and v.maxCount ~= nil and v.count ~= v.maxCount then
+		if v.count ~= nil and v.maxCount ~= nil and v.count ~= v.maxCount and ((v.count > v.maxCount and SE.savedVariables.allowOverflow) == false) then
 			SE.rows[k]:SetColor(SE.savedVariables.colorR_Incomplete, SE.savedVariables.colorG_Incomplete, SE.savedVariables.colorB_Incomplete)
 			SE.rows[k]:SetAlpha(SE.savedVariables.colorA_Incomplete)
 		else
@@ -128,6 +128,7 @@ function SE.applyValues()
 	ShowEquippedName:SetFont(SE.savedVariables.selectedFont_Title)
 	for k, v in pairs(SE.rows) do
 		v:SetFont(SE.savedVariables.selectedFont)
+		v:SetHeight(v:GetTextHeight())
 	end
 	
 	--Position
@@ -138,6 +139,10 @@ end
 function SE.Initialize()
 
 	SE.defaults = {
+		checked = false,
+		hideTitle = false,
+		allowOverflow = true,
+		
 		colorR_Title = 1.0,
 		colorG_Title = 1.0,
 		colorB_Title = 1.0,
@@ -161,7 +166,6 @@ function SE.Initialize()
 			
 		selectedPos = 3,
 		selectedText_pos = "Top Left",
-		checked = false,
 		offset_x = 0,
 		offset_y = 0,
 	}
@@ -239,6 +243,37 @@ function SE.Initialize()
         disable = function() return areSettingsDisabled end,
     }
 	
+	local toggle_Title = {
+        type = LibHarvensAddonSettings.ST_CHECKBOX, --setting type
+        label = "Hide Title?", 
+        tooltip = "Disables the Title Row when set to \"On\"",
+        default = SE.defaults.hideTitle,
+        setFunction = function(state) 
+            SE.savedVariables.hideTitle = state
+			ShowEquippedName:SetHidden(state)
+        end,
+        getFunction = function() 
+            return SE.savedVariables.hideTitle
+        end,
+        disable = function() return areSettingsDisabled end,
+    }
+	
+	local extraPieces = {
+        type = LibHarvensAddonSettings.ST_CHECKBOX, --setting type
+        label = "Allow Extra Pieces", 
+        tooltip = "Sets that exceed the requirements for a completed set bonus will be colored as completed if this option as enabled.\n\n"..
+					"Example: A 7/5 set would recieve the \"Complete\" color if this option is enabled.",
+        default = SE.defaults.allowOverflow,
+        setFunction = function(state) 
+            SE.savedVariables.allowOverflow = state
+			SE.applyValues()
+        end,
+        getFunction = function() 
+            return SE.savedVariables.allowOverflow
+        end,
+        disable = function() return areSettingsDisabled end,
+    }
+	
 	local titleColor = {
         type = LibHarvensAddonSettings.ST_COLOR,
         label = "Title Color",
@@ -309,6 +344,7 @@ function SE.Initialize()
         tooltip = "Change the size of the Title.",
         setFunction = function(combobox, name, item)
 			ShowEquippedName:SetFont(item.data)
+			ShowEquippedName:SetHeight(ShowEquippedName:GetTextHeight())
 			SE.savedVariables.selectedText_font_Title = name
 			SE.savedVariables.selectedFont_Title = item.data
         end,
@@ -349,6 +385,7 @@ function SE.Initialize()
 		
 			for k, v in pairs(SE.rows) do
 				v:SetFont(item.data)
+				v:SetHeight(v:GetTextHeight())
 			end
 			
 			SE.savedVariables.selectedText_font = name
@@ -483,7 +520,7 @@ function SE.Initialize()
         disable = function() return areSettingsDisabled end,
     }
 	
-	settings:AddSettings({generalSection, resetDefaults, toggle})
+	settings:AddSettings({generalSection, resetDefaults, extraPieces, toggle, toggle_Title})
 	settings:AddSettings({colorSection, titleColor, completeColor, incompleteColor})
 	settings:AddSettings({sizeSection, title_font, set_font})
 	settings:AddSettings({positionSection, position, offset_x, offset_y})
