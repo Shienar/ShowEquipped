@@ -136,6 +136,14 @@ function SE.applyValues()
 	ShowEquipped:SetAnchor(SE.savedVariables.selectedPos, GuiRoot, SE.savedVariables.selectedPos, SE.savedVariables.offset_x, SE.savedVariables.offset_y)
 end
 
+local function fragmentChange(oldState, newState)
+	if newState == SCENE_FRAGMENT_SHOWN then
+		ShowEquipped:SetHidden(SE.savedVariables.checked)
+	elseif newState == SCENE_FRAGMENT_HIDDEN then
+		ShowEquipped:SetHidden(true)
+	end
+end
+
 function SE.Initialize()
 
 	SE.defaults = {
@@ -180,6 +188,8 @@ function SE.Initialize()
 	
 	SE.applyValues()
 	
+	HUD_FRAGMENT:RegisterCallback("StateChange", fragmentChange)
+	
 	--settings
 	local settings = LibHarvensAddonSettings:AddAddon("Show Equipped")
 	local areSettingsDisabled = false
@@ -188,6 +198,8 @@ function SE.Initialize()
 	local colorSection = {type = LibHarvensAddonSettings.ST_SECTION,label = "Color",}
 	local sizeSection = {type = LibHarvensAddonSettings.ST_SECTION,label = "Text Size",}
 	local positionSection = {type = LibHarvensAddonSettings.ST_SECTION,label = "General",}
+	
+	local changeCounter = 0
 	
 	local resetDefaults = {
         type = LibHarvensAddonSettings.ST_BUTTON,
@@ -224,6 +236,19 @@ function SE.Initialize()
 			SE.savedVariables.offset_y = SE.defaults.offset_y
 			
 			SE.applyValues()
+			
+			--Hide UI 5 seconds after most recent change. multiple changes can be queued.
+			ShowEquipped:SetHidden(false)
+			changeCounter = changeCounter + 1
+			local changeNum = changeCounter
+			zo_callLater(function()
+				if changeNum == changeCounter then
+					changeCounter = 0
+					if SCENE_MANAGER:GetScene("hud"):GetState() == SCENE_HIDDEN or AT.savedVariables.checked then
+						ShowEquipped:SetHidden(true)
+					end
+				end
+			end, 5000)
 		end,
         disable = function() return areSettingsDisabled end,
     }
@@ -236,6 +261,21 @@ function SE.Initialize()
         setFunction = function(state) 
             SE.savedVariables.checked = state
 			ShowEquipped:SetHidden(state)
+			
+			if state == false then
+				--Hide UI 5 seconds after most recent change. multiple changes can be queued.
+				ShowEquipped:SetHidden(false)
+				changeCounter = changeCounter + 1
+				local changeNum = changeCounter
+				zo_callLater(function()
+					if changeNum == changeCounter then
+						changeCounter = 0
+						if SCENE_MANAGER:GetScene("hud"):GetState() == SCENE_HIDDEN or AT.savedVariables.checked then
+							ShowEquipped:SetHidden(true)
+						end
+					end
+				end, 5000)
+			end
         end,
         getFunction = function() 
             return SE.savedVariables.checked
@@ -251,6 +291,19 @@ function SE.Initialize()
         setFunction = function(state) 
             SE.savedVariables.hideTitle = state
 			ShowEquippedName:SetHidden(state)
+			
+			--Hide UI 5 seconds after most recent change. multiple changes can be queued.
+			ShowEquipped:SetHidden(false)
+			changeCounter = changeCounter + 1
+			local changeNum = changeCounter
+			zo_callLater(function()
+				if changeNum == changeCounter then
+					changeCounter = 0
+					if SCENE_MANAGER:GetScene("hud"):GetState() == SCENE_HIDDEN or AT.savedVariables.checked then
+						ShowEquipped:SetHidden(true)
+					end
+				end
+			end, 5000)
         end,
         getFunction = function() 
             return SE.savedVariables.hideTitle
@@ -267,6 +320,19 @@ function SE.Initialize()
         setFunction = function(state) 
             SE.savedVariables.allowOverflow = state
 			SE.applyValues()
+			
+			--Hide UI 5 seconds after most recent change. multiple changes can be queued.
+			ShowEquipped:SetHidden(false)
+			changeCounter = changeCounter + 1
+			local changeNum = changeCounter
+			zo_callLater(function()
+				if changeNum == changeCounter then
+					changeCounter = 0
+					if SCENE_MANAGER:GetScene("hud"):GetState() == SCENE_HIDDEN or AT.savedVariables.checked then
+						ShowEquipped:SetHidden(true)
+					end
+				end
+			end, 5000)
         end,
         getFunction = function() 
             return SE.savedVariables.allowOverflow
@@ -282,6 +348,19 @@ function SE.Initialize()
             SE.savedVariables.colorR_Title, SE.savedVariables.colorG_Title, SE.savedVariables.colorB_Title, SE.savedVariables.colorA_Title = ...
 			ShowEquippedName:SetColor(SE.savedVariables.colorR_Title, SE.savedVariables.colorG_Title, SE.savedVariables.colorB_Title)
 			ShowEquippedName:SetAlpha(SE.savedVariables.colorA_Title)
+			
+			--Hide UI 5 seconds after most recent change. multiple changes can be queued.
+			ShowEquipped:SetHidden(false)
+			changeCounter = changeCounter + 1
+			local changeNum = changeCounter
+			zo_callLater(function()
+				if changeNum == changeCounter then
+					changeCounter = 0
+					if SCENE_MANAGER:GetScene("hud"):GetState() == SCENE_HIDDEN or AT.savedVariables.checked then
+						ShowEquipped:SetHidden(true)
+					end
+				end
+			end, 5000)
         end,
         default = {SE.defaults.colorR_Title, SE.defaults.colorG_Title, SE.defaults.colorB_Title, SE.defaults.colorA_Title},
         getFunction = function()
@@ -306,6 +385,19 @@ function SE.Initialize()
 					SE.rows[k]:SetAlpha(SE.savedVariables.colorA_Complete)
 				end
 			end
+			
+			--Hide UI 5 seconds after most recent change. multiple changes can be queued.
+			ShowEquipped:SetHidden(false)
+			changeCounter = changeCounter + 1
+			local changeNum = changeCounter
+			zo_callLater(function()
+				if changeNum == changeCounter then
+					changeCounter = 0
+					if SCENE_MANAGER:GetScene("hud"):GetState() == SCENE_HIDDEN or AT.savedVariables.checked then
+						ShowEquipped:SetHidden(true)
+					end
+				end
+			end, 5000)
         end,
         default = {SE.defaults.colorR_Complete, SE.defaults.colorG_Complete, SE.defaults.colorB_Complete, SE.defaults.colorA_Complete},
         getFunction = function()
@@ -330,6 +422,19 @@ function SE.Initialize()
 					SE.rows[k]:SetAlpha(SE.savedVariables.colorA_Complete)
 				end
 			end
+			
+			--Hide UI 5 seconds after most recent change. multiple changes can be queued.
+			ShowEquipped:SetHidden(false)
+			changeCounter = changeCounter + 1
+			local changeNum = changeCounter
+			zo_callLater(function()
+				if changeNum == changeCounter then
+					changeCounter = 0
+					if SCENE_MANAGER:GetScene("hud"):GetState() == SCENE_HIDDEN or AT.savedVariables.checked then
+						ShowEquipped:SetHidden(true)
+					end
+				end
+			end, 5000)
         end,
         default = {SE.defaults.colorR_Incomplete, SE.defaults.colorG_Incomplete, SE.defaults.colorB_Incomplete, SE.defaults.colorA_Incomplete},
         getFunction = function()
@@ -347,6 +452,19 @@ function SE.Initialize()
 			ShowEquippedName:SetHeight(ShowEquippedName:GetTextHeight())
 			SE.savedVariables.selectedText_font_Title = name
 			SE.savedVariables.selectedFont_Title = item.data
+			
+			--Hide UI 5 seconds after most recent change. multiple changes can be queued.
+			ShowEquipped:SetHidden(false)
+			changeCounter = changeCounter + 1
+			local changeNum = changeCounter
+			zo_callLater(function()
+				if changeNum == changeCounter then
+					changeCounter = 0
+					if SCENE_MANAGER:GetScene("hud"):GetState() == SCENE_HIDDEN or AT.savedVariables.checked then
+						ShowEquipped:SetHidden(true)
+					end
+				end
+			end, 5000)
         end,
         getFunction = function()
             return SE.savedVariables.selectedText_font_Title
@@ -390,6 +508,19 @@ function SE.Initialize()
 			
 			SE.savedVariables.selectedText_font = name
 			SE.savedVariables.selectedFont = item.data
+			
+			--Hide UI 5 seconds after most recent change. multiple changes can be queued.
+			ShowEquipped:SetHidden(false)
+			changeCounter = changeCounter + 1
+			local changeNum = changeCounter
+			zo_callLater(function()
+				if changeNum == changeCounter then
+					changeCounter = 0
+					if SCENE_MANAGER:GetScene("hud"):GetState() == SCENE_HIDDEN or AT.savedVariables.checked then
+						ShowEquipped:SetHidden(true)
+					end
+				end
+			end, 5000)
         end,
         getFunction = function()
             return SE.savedVariables.selectedText_font
@@ -430,6 +561,19 @@ function SE.Initialize()
 			
 			ShowEquipped:ClearAnchors()
 			ShowEquipped:SetAnchor(SE.savedVariables.selectedPos, GuiRoot, SE.savedVariables.selectedPos, SE.savedVariables.offset_x, SE.savedVariables.offset_y)
+		 
+			--Hide UI 5 seconds after most recent change. multiple changes can be queued.
+			ShowEquipped:SetHidden(false)
+			changeCounter = changeCounter + 1
+			local changeNum = changeCounter
+			zo_callLater(function()
+				if changeNum == changeCounter then
+					changeCounter = 0
+					if SCENE_MANAGER:GetScene("hud"):GetState() == SCENE_HIDDEN or AT.savedVariables.checked then
+						ShowEquipped:SetHidden(true)
+					end
+				end
+			end, 5000)
 		 end,
         getFunction = function()
             return SE.savedVariables.selectedText_pos
@@ -485,7 +629,20 @@ function SE.Initialize()
 			
 			ShowEquipped:ClearAnchors()
 			ShowEquipped:SetAnchor(SE.savedVariables.selectedPos, GuiRoot, SE.savedVariables.selectedPos, SE.savedVariables.offset_x, SE.savedVariables.offset_y)
-		  end,
+		 
+			--Hide UI 5 seconds after most recent change. multiple changes can be queued.
+			ShowEquipped:SetHidden(false)
+			changeCounter = changeCounter + 1
+			local changeNum = changeCounter
+			zo_callLater(function()
+				if changeNum == changeCounter then
+					changeCounter = 0
+					if SCENE_MANAGER:GetScene("hud"):GetState() == SCENE_HIDDEN or AT.savedVariables.checked then
+						ShowEquipped:SetHidden(true)
+					end
+				end
+			end, 5000)
+		end,
         getFunction = function()
             return SE.savedVariables.offset_x
         end,
@@ -507,6 +664,19 @@ function SE.Initialize()
 		
 			ShowEquipped:ClearAnchors()
 			ShowEquipped:SetAnchor(SE.savedVariables.selectedPos, GuiRoot, SE.savedVariables.selectedPos, SE.savedVariables.offset_x, SE.savedVariables.offset_y)
+		 
+			--Hide UI 5 seconds after most recent change. multiple changes can be queued.
+			ShowEquipped:SetHidden(false)
+			changeCounter = changeCounter + 1
+			local changeNum = changeCounter
+			zo_callLater(function()
+				if changeNum == changeCounter then
+					changeCounter = 0
+					if SCENE_MANAGER:GetScene("hud"):GetState() == SCENE_HIDDEN or AT.savedVariables.checked then
+						ShowEquipped:SetHidden(true)
+					end
+				end
+			end, 5000)
 		 end,
         getFunction = function()
             return SE.savedVariables.offset_y
