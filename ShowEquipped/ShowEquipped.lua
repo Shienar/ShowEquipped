@@ -244,7 +244,7 @@ function SE.Initialize()
 			zo_callLater(function()
 				if changeNum == changeCounter then
 					changeCounter = 0
-					if SCENE_MANAGER:GetScene("hud"):GetState() == SCENE_HIDDEN or AT.savedVariables.checked then
+					if SCENE_MANAGER:GetScene("hud"):GetState() == SCENE_HIDDEN or SE.savedVariables.checked then
 						ShowEquipped:SetHidden(true)
 					end
 				end
@@ -270,7 +270,7 @@ function SE.Initialize()
 				zo_callLater(function()
 					if changeNum == changeCounter then
 						changeCounter = 0
-						if SCENE_MANAGER:GetScene("hud"):GetState() == SCENE_HIDDEN or AT.savedVariables.checked then
+						if SCENE_MANAGER:GetScene("hud"):GetState() == SCENE_HIDDEN or SE.savedVariables.checked then
 							ShowEquipped:SetHidden(true)
 						end
 					end
@@ -299,7 +299,7 @@ function SE.Initialize()
 			zo_callLater(function()
 				if changeNum == changeCounter then
 					changeCounter = 0
-					if SCENE_MANAGER:GetScene("hud"):GetState() == SCENE_HIDDEN or AT.savedVariables.checked then
+					if SCENE_MANAGER:GetScene("hud"):GetState() == SCENE_HIDDEN or SE.savedVariables.checked then
 						ShowEquipped:SetHidden(true)
 					end
 				end
@@ -328,7 +328,7 @@ function SE.Initialize()
 			zo_callLater(function()
 				if changeNum == changeCounter then
 					changeCounter = 0
-					if SCENE_MANAGER:GetScene("hud"):GetState() == SCENE_HIDDEN or AT.savedVariables.checked then
+					if SCENE_MANAGER:GetScene("hud"):GetState() == SCENE_HIDDEN or SE.savedVariables.checked then
 						ShowEquipped:SetHidden(true)
 					end
 				end
@@ -356,7 +356,7 @@ function SE.Initialize()
 			zo_callLater(function()
 				if changeNum == changeCounter then
 					changeCounter = 0
-					if SCENE_MANAGER:GetScene("hud"):GetState() == SCENE_HIDDEN or AT.savedVariables.checked then
+					if SCENE_MANAGER:GetScene("hud"):GetState() == SCENE_HIDDEN or SE.savedVariables.checked then
 						ShowEquipped:SetHidden(true)
 					end
 				end
@@ -393,7 +393,7 @@ function SE.Initialize()
 			zo_callLater(function()
 				if changeNum == changeCounter then
 					changeCounter = 0
-					if SCENE_MANAGER:GetScene("hud"):GetState() == SCENE_HIDDEN or AT.savedVariables.checked then
+					if SCENE_MANAGER:GetScene("hud"):GetState() == SCENE_HIDDEN or SE.savedVariables.checked then
 						ShowEquipped:SetHidden(true)
 					end
 				end
@@ -430,7 +430,7 @@ function SE.Initialize()
 			zo_callLater(function()
 				if changeNum == changeCounter then
 					changeCounter = 0
-					if SCENE_MANAGER:GetScene("hud"):GetState() == SCENE_HIDDEN or AT.savedVariables.checked then
+					if SCENE_MANAGER:GetScene("hud"):GetState() == SCENE_HIDDEN or SE.savedVariables.checked then
 						ShowEquipped:SetHidden(true)
 					end
 				end
@@ -460,7 +460,7 @@ function SE.Initialize()
 			zo_callLater(function()
 				if changeNum == changeCounter then
 					changeCounter = 0
-					if SCENE_MANAGER:GetScene("hud"):GetState() == SCENE_HIDDEN or AT.savedVariables.checked then
+					if SCENE_MANAGER:GetScene("hud"):GetState() == SCENE_HIDDEN or SE.savedVariables.checked then
 						ShowEquipped:SetHidden(true)
 					end
 				end
@@ -516,7 +516,7 @@ function SE.Initialize()
 			zo_callLater(function()
 				if changeNum == changeCounter then
 					changeCounter = 0
-					if SCENE_MANAGER:GetScene("hud"):GetState() == SCENE_HIDDEN or AT.savedVariables.checked then
+					if SCENE_MANAGER:GetScene("hud"):GetState() == SCENE_HIDDEN or SE.savedVariables.checked then
 						ShowEquipped:SetHidden(true)
 					end
 				end
@@ -569,7 +569,7 @@ function SE.Initialize()
 			zo_callLater(function()
 				if changeNum == changeCounter then
 					changeCounter = 0
-					if SCENE_MANAGER:GetScene("hud"):GetState() == SCENE_HIDDEN or AT.savedVariables.checked then
+					if SCENE_MANAGER:GetScene("hud"):GetState() == SCENE_HIDDEN or SE.savedVariables.checked then
 						ShowEquipped:SetHidden(true)
 					end
 				end
@@ -637,7 +637,7 @@ function SE.Initialize()
 			zo_callLater(function()
 				if changeNum == changeCounter then
 					changeCounter = 0
-					if SCENE_MANAGER:GetScene("hud"):GetState() == SCENE_HIDDEN or AT.savedVariables.checked then
+					if SCENE_MANAGER:GetScene("hud"):GetState() == SCENE_HIDDEN or SE.savedVariables.checked then
 						ShowEquipped:SetHidden(true)
 					end
 				end
@@ -672,7 +672,7 @@ function SE.Initialize()
 			zo_callLater(function()
 				if changeNum == changeCounter then
 					changeCounter = 0
-					if SCENE_MANAGER:GetScene("hud"):GetState() == SCENE_HIDDEN or AT.savedVariables.checked then
+					if SCENE_MANAGER:GetScene("hud"):GetState() == SCENE_HIDDEN or SE.savedVariables.checked then
 						ShowEquipped:SetHidden(true)
 					end
 				end
