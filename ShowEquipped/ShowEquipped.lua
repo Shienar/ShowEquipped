@@ -172,8 +172,8 @@ function SE.Initialize()
 		selectedText_font = "22",
 		selectedFont = "ZoFontGamepad22",
 			
-		selectedPos = 3,
-		selectedText_pos = "Top Left",
+		selectedPos = 3,					--Legacy setting kept to not mess up with user's UI on update.
+		selectedText_pos = "Top Left",		--Legacy setting kept to not mess up with user's UI on update.
 		offset_x = 0,
 		offset_y = 0,
 	}
@@ -551,149 +551,55 @@ function SE.Initialize()
         disable = function() return areSettingsDisabled end,
     }
 	
-	local position = {
-        type = LibHarvensAddonSettings.ST_DROPDOWN,
-        label = "Tracker Position",
-        tooltip = "",
-        setFunction = function(combobox, name, item)
-			SE.savedVariables.selectedText_pos = name
-			SE.savedVariables.selectedPos = item.data
-			
-			ShowEquipped:ClearAnchors()
-			ShowEquipped:SetAnchor(SE.savedVariables.selectedPos, GuiRoot, SE.savedVariables.selectedPos, SE.savedVariables.offset_x, SE.savedVariables.offset_y)
-		 
-			--Hide UI 5 seconds after most recent change. multiple changes can be queued.
-			ShowEquipped:SetHidden(false)
-			changeCounter = changeCounter + 1
-			local changeNum = changeCounter
-			zo_callLater(function()
-				if changeNum == changeCounter then
-					changeCounter = 0
-					if SCENE_MANAGER:GetScene("hud"):GetState() == SCENE_HIDDEN or SE.savedVariables.checked then
-						ShowEquipped:SetHidden(true)
+	SE.currentlyChangingPosition = false
+	local repositionUI = {
+		type = LibHarvensAddonSettings.ST_CHECKBOX,
+		label = "Reposition UI",
+		tooltip = "When enabled, you will be able to freely move around the UI with your right joystick.\n\nSet this to OFF after configuring position.",
+		getFunction = function() return SE.currentlyChangingPosition end,
+		setFunction = function(value) 
+			SE.currentlyChangingPosition = value
+			if value == true then
+				ShowEquipped:SetHidden(false)
+				EVENT_MANAGER:RegisterForUpdate(SE.name.."AdjustUI", 10,  function() 
+					if SE.savedVariables.selectedPos ~= 3 then SE.savedVariables.selectedPos = 3 end
+					local posX, posY = GetGamepadRightStickX(), GetGamepadRightStickY()
+					if posX ~= 0 or posY ~= 0 then 
+						SE.savedVariables.offset_x = SE.savedVariables.offset_x + 10*posX
+						SE.savedVariables.offset_y = SE.savedVariables.offset_y - 10*posY
+
+						if SE.savedVariables.offset_x < 0 then SE.savedVariables.offset_x = 0 end
+						if SE.savedVariables.offset_y < 0 then SE.savedVariables.offset_y = 0 end
+						if SE.savedVariables.offset_x > (GuiRoot:GetWidth() - 20) then SE.savedVariables.offset_x = (GuiRoot:GetWidth() - 20) end
+						if SE.savedVariables.offset_y >(GuiRoot:GetHeight() - 20) then SE.savedVariables.offset_y = (GuiRoot:GetHeight() - 20) end
+
+						ShowEquipped:ClearAnchors()
+						ShowEquipped:SetAnchor(TOPLEFT, GuiRoot, TOPLEFT, SE.savedVariables.offset_x, SE.savedVariables.offset_y)
+					end 
+				end)
+			else
+				EVENT_MANAGER:UnregisterForUpdate(SE.name.."AdjustUI")
+				--Hide UI 5 seconds after most recent change. multiple changes can be queued.
+				ShowEquipped:SetHidden(false)
+				changeCounter = changeCounter + 1
+				local changeNum = changeCounter
+				zo_callLater(function()
+					if changeNum == changeCounter then
+						changeCounter = 0
+						if SCENE_MANAGER:GetScene("hud"):GetState() == SCENE_HIDDEN or SE.savedVariables.checked then
+							ShowEquipped:SetHidden(true)
+						end
 					end
-				end
-			end, 5000)
-		 end,
-        getFunction = function()
-            return SE.savedVariables.selectedText_pos
-        end,
-        default = SE.defaults.selectedText_pos,
-        items = {
-            {
-                name = "Top Left",
-                data = 3
-            },
-			{
-                name = "Top",
-                data = 1
-            },
-            {
-                name = "Top Right",
-                data = 9
-            },
-			{
-                name = "Left",
-                data = 2
-            },
-			{
-                name = "Center",
-                data = 128
-            },
-			{
-                name = "Right",
-                data = 8
-            },
-			{
-                name = "Bottom Left",
-                data = 6
-            },
-			{
-                name = "Bottom",
-                data = 4
-            },
-			{
-                name = "Bottom Right",
-                data = 12
-            },
-        },
-        disable = function() return areSettingsDisabled end,
-    }
-	
-	local offset_x = {
-        type = LibHarvensAddonSettings.ST_SLIDER,
-        label = "X Offset",
-        tooltip = "",
-        setFunction = function(value)
-			SE.savedVariables.offset_x = value
-			
-			ShowEquipped:ClearAnchors()
-			ShowEquipped:SetAnchor(SE.savedVariables.selectedPos, GuiRoot, SE.savedVariables.selectedPos, SE.savedVariables.offset_x, SE.savedVariables.offset_y)
-		 
-			--Hide UI 5 seconds after most recent change. multiple changes can be queued.
-			ShowEquipped:SetHidden(false)
-			changeCounter = changeCounter + 1
-			local changeNum = changeCounter
-			zo_callLater(function()
-				if changeNum == changeCounter then
-					changeCounter = 0
-					if SCENE_MANAGER:GetScene("hud"):GetState() == SCENE_HIDDEN or SE.savedVariables.checked then
-						ShowEquipped:SetHidden(true)
-					end
-				end
-			end, 5000)
+				end, 5000)
+			end
 		end,
-        getFunction = function()
-            return SE.savedVariables.offset_x
-        end,
-        default = 0,
-        min = -750,
-        max = 750,
-        step = 5,
-        unit = "", --optional unit
-        format = "%d", --value format
-        disable = function() return areSettingsDisabled end,
-    }
-	
-	local offset_y = {
-        type = LibHarvensAddonSettings.ST_SLIDER,
-        label = "Y Offset",
-        tooltip = "",
-        setFunction = function(value)
-			SE.savedVariables.offset_y = value
-		
-			ShowEquipped:ClearAnchors()
-			ShowEquipped:SetAnchor(SE.savedVariables.selectedPos, GuiRoot, SE.savedVariables.selectedPos, SE.savedVariables.offset_x, SE.savedVariables.offset_y)
-		 
-			--Hide UI 5 seconds after most recent change. multiple changes can be queued.
-			ShowEquipped:SetHidden(false)
-			changeCounter = changeCounter + 1
-			local changeNum = changeCounter
-			zo_callLater(function()
-				if changeNum == changeCounter then
-					changeCounter = 0
-					if SCENE_MANAGER:GetScene("hud"):GetState() == SCENE_HIDDEN or SE.savedVariables.checked then
-						ShowEquipped:SetHidden(true)
-					end
-				end
-			end, 5000)
-		 end,
-        getFunction = function()
-            return SE.savedVariables.offset_y
-        end,
-        default = 0,
-        min = -750,
-        max = 750,
-        step = 5,
-        unit = "", --optional unit
-        format = "%d", --value format
-        disable = function() return areSettingsDisabled end,
-    }
-	
+		default = SE.currentlyChangingPosition
+	}
+
 	settings:AddSettings({generalSection, resetDefaults, extraPieces, toggle, toggle_Title})
 	settings:AddSettings({colorSection, titleColor, completeColor, incompleteColor})
 	settings:AddSettings({sizeSection, title_font, set_font})
-	settings:AddSettings({positionSection, position, offset_x, offset_y})
+	settings:AddSettings({positionSection, repositionUI})
 	
 	EVENT_MANAGER:RegisterForEvent(SE.name, EVENT_INVENTORY_SINGLE_SLOT_UPDATE, SE.onUpdateEquips)
 	EVENT_MANAGER:RegisterForEvent(SE.name, EVENT_ARMORY_BUILD_RESTORE_RESPONSE, SE.onUpdateEquips)
