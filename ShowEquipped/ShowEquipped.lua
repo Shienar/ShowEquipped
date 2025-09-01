@@ -554,7 +554,7 @@ function SE.Initialize()
 	SE.currentlyChangingPosition = false
 	local repositionUI = {
 		type = LibHarvensAddonSettings.ST_CHECKBOX,
-		label = "Reposition UI",
+		label = "Joystick Reposition",
 		tooltip = "When enabled, you will be able to freely move around the UI with your right joystick.\n\nSet this to OFF after configuring position.",
 		getFunction = function() return SE.currentlyChangingPosition end,
 		setFunction = function(value) 
@@ -596,10 +596,84 @@ function SE.Initialize()
 		default = SE.currentlyChangingPosition
 	}
 
+	--x position offset
+	local slider_x = {
+        type = LibHarvensAddonSettings.ST_SLIDER,
+        label = "X Offset",
+        tooltip = "",
+        setFunction = function(value)
+			SE.savedVariables.offset_x = value
+			if SE.savedVariables.selectedPos ~= 3 then SE.savedVariables.selectedPos = 3 end
+			
+			ShowEquipped:ClearAnchors()
+			ShowEquipped:SetAnchor(SE.savedVariables.selectedPos, GuiRoot, SE.savedVariables.selectedPos, SE.savedVariables.offset_x, SE.savedVariables.offset_y)
+			
+			--Hide UI 5 seconds after most recent change. multiple changes can be queued.
+			ShowEquipped:SetHidden(false)
+			changeCounter = changeCounter + 1
+			local changeNum = changeCounter
+			zo_callLater(function()
+				if changeNum == changeCounter then
+					changeCounter = 0
+					if SCENE_MANAGER:GetScene("hud"):GetState() == SCENE_HIDDEN or SE.savedVariables.checked then
+						ShowEquipped:SetHidden(true)
+					end
+				end
+			end, 5000)
+		end,
+        getFunction = function()
+            return SE.savedVariables.offset_x
+        end,
+        default = 0,
+        min = 0,
+        max = GuiRoot:GetWidth(),
+        step = 5,
+        unit = "", --optional unit
+        format = "%d", --value format
+        disable = function() return areSettingsDisabled end,
+    }
+	
+	--y position offset
+	local slider_y = {
+        type = LibHarvensAddonSettings.ST_SLIDER,
+        label = "Y Offset",
+        tooltip = "",
+        setFunction = function(value)
+			SE.savedVariables.offset_y = value
+			if SE.savedVariables.selectedPos ~= 3 then SE.savedVariables.selectedPos = 3 end
+			
+			ShowEquipped:ClearAnchors()
+			ShowEquipped:SetAnchor(SE.savedVariables.selectedPos, GuiRoot, SE.savedVariables.selectedPos, SE.savedVariables.offset_x, SE.savedVariables.offset_y)
+			
+			--Hide UI 5 seconds after most recent change. multiple changes can be queued.
+			ShowEquipped:SetHidden(false)
+			changeCounter = changeCounter + 1
+			local changeNum = changeCounter
+			zo_callLater(function()
+				if changeNum == changeCounter then
+					changeCounter = 0
+					if SCENE_MANAGER:GetScene("hud"):GetState() == SCENE_HIDDEN or SE.savedVariables.checked then
+						ShowEquipped:SetHidden(true)
+					end
+				end
+			end, 5000)
+		end,
+        getFunction = function()
+            return SE.savedVariables.offset_y
+        end,
+        default = 0,
+        min = 0,
+        max = GuiRoot:GetHeight(),
+        step = 5,
+        unit = "", --optional unit
+        format = "%d", --value format
+        disable = function() return areSettingsDisabled end,
+    }
+
 	settings:AddSettings({generalSection, resetDefaults, extraPieces, toggle, toggle_Title})
 	settings:AddSettings({colorSection, titleColor, completeColor, incompleteColor})
 	settings:AddSettings({sizeSection, title_font, set_font})
-	settings:AddSettings({positionSection, repositionUI})
+	settings:AddSettings({positionSection, repositionUI, slider_x, slider_y})
 	
 	EVENT_MANAGER:RegisterForEvent(SE.name, EVENT_INVENTORY_SINGLE_SLOT_UPDATE, SE.onUpdateEquips)
 	EVENT_MANAGER:RegisterForEvent(SE.name, EVENT_ARMORY_BUILD_RESTORE_RESPONSE, SE.onUpdateEquips)
