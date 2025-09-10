@@ -563,7 +563,7 @@ function SE.Initialize()
 				ShowEquipped:SetHidden(false)
 				EVENT_MANAGER:RegisterForUpdate(SE.name.."AdjustUI", 10,  function() 
 					if SE.savedVariables.selectedPos ~= 3 then SE.savedVariables.selectedPos = 3 end
-					local posX, posY = GetGamepadRightStickX(), GetGamepadRightStickY()
+					local posX, posY = GetGamepadRightStickX(true), GetGamepadRightStickY(true)
 					if posX ~= 0 or posY ~= 0 then 
 						SE.savedVariables.offset_x = SE.savedVariables.offset_x + 10*posX
 						SE.savedVariables.offset_y = SE.savedVariables.offset_y - 10*posY
