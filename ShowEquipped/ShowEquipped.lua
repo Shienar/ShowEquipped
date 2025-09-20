@@ -65,7 +65,8 @@ function SE.onUpdateEquips(code, bagID, slotIndex, isNewItem, soundCategory, upd
 					wType == WEAPONTYPE_FIRE_STAFF or
 					wType == WEAPONTYPE_TWO_HANDED_AXE or
 					wType == WEAPONTYPE_TWO_HANDED_HAMMER or
-					wType == WEAPONTYPE_TWO_HANDED_SWORD)then
+					wType == WEAPONTYPE_TWO_HANDED_SWORD or
+					wType == WEAPONTYPE_BOW)then
 					
 						item.count = item.count + 1
 				end
